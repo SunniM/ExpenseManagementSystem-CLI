@@ -1,0 +1,6 @@
+MANAGER
+- model pojo class
+- dao interface/class to access database
+- service validations/business logic
+-Main.java
+Main-> ServiceLayer-> DAOLayer ->DataBase
