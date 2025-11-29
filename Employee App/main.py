@@ -4,6 +4,7 @@ import os
 import sys
 
 import sql_db as db
+import mysql_db as mdb
 
 def clear_console():
     if os.name == 'nt':  # For Windows
@@ -42,7 +43,8 @@ def validate_description(description):
 class EmployeeMenu:
 
     def __init__(self):
-        self.db = db.Database()
+        # self.db = db.Database()
+        self.db = mdb.Database()
         self.menu_options = [
                 ("Submit New Expense Report" , self.add_expense),
                 ("View Pending Expense Reports", self.view_pending),
@@ -160,8 +162,6 @@ class EmployeeMenu:
     def close(self):
         self.db.close()
         sys.exit()
-
-
 
 if __name__ == "__main__":
     menu = EmployeeMenu()
