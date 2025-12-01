@@ -1,12 +1,13 @@
 package com.revature.expensemanager.model;
 
+import java.util.List;
+
 public class Expense {
     private int id;
     private int userID;
     private double amount;
     private String description;
     private String date;
-    private static int maxLength = 0;
 
     public Expense(int id, int userID, double amount, String description, String date) {
         this.id = id;
@@ -14,9 +15,7 @@ public class Expense {
         this.amount = amount;
         this.description = description;
         this.date = date;
-        maxLength = (description.length() > maxLength) ? description.length() : maxLength;
-        maxLength = (description.length() > maxLength) ? description.length() : maxLength;
-        maxLength = (description.length() > maxLength) ? description.length() : maxLength;
+
     }
 
     public int getId() {
@@ -47,32 +46,10 @@ public class Expense {
         this.date = date;
     }
 
-    public static int getMaxLength() {
-        return maxLength;
-    }
-
-    private void updateMaxLength(String str) {
-        maxLength = (str.length() > maxLength) ? str.length() : maxLength;
-    }
-
-    public static String getHeader() {
-        // StringBuilder sb = new StringBuilder();
-        return String.format("%" + maxLength + "s "
-                + "%" + maxLength + "s "
-                + "%" + maxLength + "s "
-                + "%" + maxLength + "s "
-                + "%" + maxLength + "s ",
-                "ID", "User ID", "Amount", "Description", "Data");
-    }
-
     @Override
     public String toString() {
-        return String.format("%" + maxLength + "d "
-                + "%" + maxLength + "d "
-                + "%" + maxLength + ".2f "
-                + "%" + maxLength + "s "
-                + "%" + maxLength + "s ",
-                id, userID, amount, description, date);
+        return getClass().getSimpleName()
+                + String.format("{id=%d, userID=%d, amount=%f, description=%s, date=%s}",
+                        id, userID, amount, description, date);
     }
-
 }

@@ -3,7 +3,6 @@ package com.revature.expensemanager.menu;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.revature.expensemanager.service.UserService;
 import com.revature.expensemanager.service.ExpenseService;
 import com.revature.expensemanager.exception.UserNotFoundException;
 import com.revature.expensemanager.model.User;
@@ -12,7 +11,6 @@ import com.revature.expensemanager.service.LoginService;
 
 public class Menu {
 
-    private static final UserService userService = new UserService();
     private static final ExpenseService expenseService = new ExpenseService();
     private static final ApprovalService approvalService = new ApprovalService();
     private static final LoginService loginService = new LoginService();
@@ -166,8 +164,34 @@ public class Menu {
     }
 
     private void viewReports() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'viewReports'");
+        System.out.println("View Reports");
+        System.out.println("1. View by Employee");
+        System.out.println("2. View by Category");
+        System.out.println("3. View by Date");
+        System.out.println("Select Report Type:");
+        int reportType = -1;
+        while (reportType < 1 || reportType > 3) {
+            reportType = getIntegerInput();
+            if (reportType < 1 || reportType > 3)
+                System.out.println("Please enter integer value from options above.");
+        }
+        String report;
+        switch (reportType) {
+            case 1:
+                report = expenseService.viewByEmployee();
+                break;
+            case 2:
+                report = expenseService.viewByCategory();
+                break;
+            case 3:
+                report = expenseService.viewByDate();
+                break;
+            default:
+                report = "Invalid Report Type.";
+                break;
+        }
+        clearConsole();
+        System.out.println(report);
     }
 
     private void denyExpense() {

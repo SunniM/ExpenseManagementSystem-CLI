@@ -45,6 +45,27 @@ CREATE TABLE IF NOT EXISTS approvals (
     FOREIGN KEY (expense_id) REFERENCES expenses (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS expense_categories (
+    expense_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    PRIMARY KEY (expense_id, category_id),
+    FOREIGN KEY (expense_id) REFERENCES expenses (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TRIGGER new_expense_approval
+AFTER INSERT ON expenses
+FOR EACH ROW
+BEGIN
+    INSERT INTO approvals (expense_id, status)
+    VALUES (NEW.id, 'PENDING');
+END;
+
 INSERT INTO
     users (username, password, role)
 VALUES (
@@ -56,4 +77,54 @@ VALUES (
         "alice",
         "wonderland",
         "EMPLOYEE"
+    ),
+    ("bob", "builder", "EMPLOYEE");
+
+INSERT INTO
+    expenses (
+        user_id,
+        amount,
+        description,
+        date
+    )
+VALUES (
+        2,
+        35,
+        "Coffee Date",
+        "2025-11-28"
     );
+
+INSERT INTO
+    categories (name)
+VALUES ("Travel"),
+    ("Food"),
+    ("Office Supplies"),
+    ("Entertainment"),
+    ("Miscellaneous");
+
+INSERT INTO
+    users (username, password, role)
+VALUES ("bob", "builder", "EMPLOYEE");
+
+--- Report By Category
+SELECT SUM(e.amount) as Total, c.name as Category
+FROM
+    expenses e
+    JOIN expense_categories ec ON e.id = ec.expense_id
+    JOIN categories c ON ec.category_id = c.id
+GROUP BY
+    c.name;
+
+--- Report By Employee
+SELECT u.username as Employee, SUM(e.amount) as Total
+FROM expenses e
+    JOIN users u on e.user_id = u.id
+GROUP BY
+    u.id;
+
+--- Report By Date
+SELECT MONTH(e.date) as Month, YEAR(e.date) as Year, SUM(e.amount) as Total
+FROM expenses e
+GROUP BY
+    MONTH(e.date),
+    YEAR(e.date);
