@@ -143,6 +143,7 @@ class EmployeeMenu:
         expenses = self.db.get_all_expenses(self.user[0])
         expenses = pd.DataFrame.from_records(expenses, columns=['ID', 'Amount', 'Description', 'Date', 'Status'])
         expenses.set_index('ID', inplace=True)
+        add comment field
         return expenses
             
     def login(self):

@@ -1,7 +1,6 @@
 package com.revature.expensemanager.service;
 
 import java.util.Calendar;
-import java.util.Optional;
 
 import com.revature.expensemanager.JDBC.ApprovalJDBC;
 import com.revature.expensemanager.model.Approval;
@@ -17,7 +16,9 @@ public class ApprovalService {
             approval.setReviewer(reviewerID);
             Calendar now = Calendar.getInstance();
             approval.setReviewDate(
-                    now.get(Calendar.YEAR) + "-" + now.get(Calendar.MONTH) + "-" + now.get(Calendar.DAY_OF_WEEK));
+                    now.get(Calendar.YEAR) + "-"
+                            + (now.get(Calendar.MONTH) + 1) + "-"
+                            + now.get(Calendar.DAY_OF_MONTH));
             approval.setComment(comment);
         }
         approvalJDBC.update(approval);

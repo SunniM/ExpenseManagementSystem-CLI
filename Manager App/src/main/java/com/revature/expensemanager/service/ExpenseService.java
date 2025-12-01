@@ -1,6 +1,5 @@
 package com.revature.expensemanager.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.revature.expensemanager.JDBC.ExpenseJDBC;
@@ -9,14 +8,47 @@ import com.revature.expensemanager.model.Expense;
 public class ExpenseService {
     private static final ExpenseJDBC expenseJDBC = new ExpenseJDBC();
 
+    private static int computeMaxDescLength(List<Expense> expenses) {
+        return expenses.stream()
+                .map(e -> e.getDescription().length())
+                .max(Integer::compareTo)
+                .orElse(10);
+    }
+
     public String getExpenseTable() {
-        StringBuilder sb = new StringBuilder();
         List<Expense> expenses = expenseJDBC.getPendingExpenses();
+        int width = computeMaxDescLength(expenses);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%10s "
+                + "%10s "
+                + "%10s "
+                + "%" + width + "s "
+                + "%10s\n",
+                "ID", "User ID", "Amount", "Description", "Date"));
         for (Expense expense : expenses) {
-            sb.append("\n");
-            sb.append(expense);
+            sb.append(String.format("%10d "
+                    + "%10d "
+                    + "%10.2f "
+                    + "%" + width + "s "
+                    + "%10s\n",
+                    expense.getId(),
+                    expense.getUserID(),
+                    expense.getAmount(),
+                    expense.getDescription(),
+                    expense.getDate()));
         }
-        sb.append("\n");
-        return Expense.getHeader() + "\n" + sb.toString();
+        return sb.toString();
+    }
+
+    public String viewByEmployee() {
+        return expenseJDBC.getEmployeeReport();
+    }
+
+    public String viewByCategory() {
+        return expenseJDBC.getCategoryReport();
+    }
+
+    public String viewByDate() {
+        return expenseJDBC.getDateReport();
     }
 }
