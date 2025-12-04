@@ -1,12 +1,17 @@
 package com.revature.expensemanager.service;
 
+import java.sql.Connection;
 import java.util.Calendar;
 
 import com.revature.expensemanager.JDBC.ApprovalJDBC;
 import com.revature.expensemanager.model.Approval;
 
 public class ApprovalService {
-    private static final ApprovalJDBC approvalJDBC = new ApprovalJDBC();
+    private ApprovalJDBC approvalJDBC;
+
+    public ApprovalService(Connection connection) {
+        approvalJDBC = new ApprovalJDBC(connection);
+    }
 
     private void updateStatus(int expenseID, int reviewerID, String comment, String status) {
         Approval approval = approvalJDBC.getByExpenseID(expenseID);

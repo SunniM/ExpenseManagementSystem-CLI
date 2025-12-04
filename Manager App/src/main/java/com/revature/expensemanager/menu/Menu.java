@@ -1,7 +1,11 @@
 package com.revature.expensemanager.menu;
 
+import java.sql.Connection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.revature.expensemanager.service.ExpenseService;
 import com.revature.expensemanager.exception.UserNotFoundException;
@@ -11,19 +15,25 @@ import com.revature.expensemanager.service.LoginService;
 
 public class Menu {
 
-    private static final ExpenseService expenseService = new ExpenseService();
-    private static final ApprovalService approvalService = new ApprovalService();
-    private static final LoginService loginService = new LoginService();
-    Scanner scanner = new Scanner(System.in);;
+    private static final Logger logger = LoggerFactory.getLogger(Menu.class);
+    private ExpenseService expenseService;
+    private ApprovalService approvalService;
+    private LoginService loginService;
 
-    String[] menuOptions = {
+    private final Scanner scanner = new Scanner(System.in);;
+    private User user = new User("", "", "");
+    private String[] menuOptions = {
             "1. View Pending Expenses",
             "2. Approve Pending Expense",
             "3. Deny Pending Expense",
             "4. View Reports",
             "0. Exit" };
 
-    private User user = new User("", "", "");
+    public Menu(Connection conn) {
+        expenseService = new ExpenseService(conn);
+        approvalService = new ApprovalService(conn);
+        loginService = new LoginService(conn);
+    }
 
     private final static void clearConsole() {
         try {
@@ -52,6 +62,7 @@ public class Menu {
                 System.out.println(e.getMessage() + " Try Again");
             }
         }
+        logger.info("User logged in - {}", user);
         clearConsole();
         System.out.println("Welcome " + user.getUsername());
     }

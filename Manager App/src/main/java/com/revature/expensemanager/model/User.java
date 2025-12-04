@@ -37,6 +37,7 @@ public class User {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "%d %s %s %s".formatted(id, username, password, role);
+        return getClass().getSimpleName()
+                + "{id=%d username='%s' password='%s' role='%s'}".formatted(id, username, password, role);
     }
 }

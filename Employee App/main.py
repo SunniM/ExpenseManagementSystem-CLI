@@ -1,9 +1,10 @@
 import datetime
+import mysql
 import pandas as pd
 import os
 import sys
 
-import sql_db as db
+# import sql_db as db
 import mysql_db as mdb
 
 def clear_console():
@@ -44,13 +45,17 @@ class EmployeeMenu:
 
     def __init__(self):
         # self.db = db.Database()
-        self.db = mdb.Database()
+        try:
+            self.db = mdb.Database()
+        except mysql.connector.errors.InterfaceError as cre:
+            print("Could not connect to database.")
+            sys.exit()
         self.menu_options = [
                 ("Submit New Expense Report" , self.add_expense),
-                ("View Pending Expense Reports", self.view_pending),
                 ("Edit Pending Expense Reports", self.edit_expense),
-                ("View All Expense Reports", self.view_all),
+                ("View Pending Expense Reports", self.view_pending),
                 ("Delete Pending Expense Reports", self.delete_expense),
+                ("View All Expense Reports", self.view_all),
                 ("Exit", self.close)]
         
     def get_category(self):
@@ -77,7 +82,7 @@ class EmployeeMenu:
                 date_input = input("Enter date (YYYY-MM-DD): ").split('-')
                 date = validate_date(date_input)
                 amount = input("Enter amount ($25.04): $")
-                validate_amount(amount, 500)
+                validate_amount(amount, 500000000)
                 description = input("Enter description: ")
                 validate_description(description)
                 category_id = self.get_category()
@@ -141,9 +146,8 @@ class EmployeeMenu:
 
     def view_all(self):
         expenses = self.db.get_all_expenses(self.user[0])
-        expenses = pd.DataFrame.from_records(expenses, columns=['ID', 'Amount', 'Description', 'Date', 'Status'])
+        expenses = pd.DataFrame.from_records(expenses, columns=['ID', 'Amount', 'Description', 'Date', 'Status', "Comment"])
         expenses.set_index('ID', inplace=True)
-        add comment field
         return expenses
             
     def login(self):
@@ -182,7 +186,7 @@ class EmployeeMenu:
                 clear_console()
                 print("Invalid choice. Try again.")
                 chosen = False
-            if choice < 0 or choice > len(self.menu_options):
+            if choice < 0 or choice >= len(self.menu_options):
                 clear_console()
                 print("Invalid choice. Try again.")
                 chosen = False

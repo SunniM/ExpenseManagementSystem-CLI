@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     user_id INTEGER NOT NULL,
-    amount REAL NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
     description VARCHAR(50) NOT NULL,
     date VARCHAR(50) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)

@@ -10,11 +10,14 @@ import java.util.Optional;
 
 import com.revature.expensemanager.dao.Dao;
 import com.revature.expensemanager.model.Expense;
-import com.revature.expensemanager.util.DbConnection;
 
 public class ExpenseJDBC implements Dao<Expense> {
 
-    Connection connection = DbConnection.dbConnection();
+    Connection connection;
+
+    public ExpenseJDBC(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public Optional<Expense> get(int id) {

@@ -11,10 +11,13 @@ import java.util.ArrayList;
 
 import com.revature.expensemanager.dao.Dao;
 import com.revature.expensemanager.model.User;
-import com.revature.expensemanager.util.DbConnection;
 
 public class UserJDBC implements Dao<User> {
-    private static final Connection connection = DbConnection.dbConnection();
+    private Connection connection;
+
+    public UserJDBC(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public void save(User user) {

@@ -5,3 +5,9 @@
 
 # MAVEN
 **/target
+
+# VSCODE
+/.vscode
+
+# MANAGER APP
+**/*.log

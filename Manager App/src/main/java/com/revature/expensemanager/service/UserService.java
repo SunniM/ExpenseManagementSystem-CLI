@@ -1,5 +1,6 @@
 package com.revature.expensemanager.service;
 
+import java.sql.Connection;
 import java.util.Optional;
 
 import com.revature.expensemanager.JDBC.UserJDBC;
@@ -7,7 +8,11 @@ import com.revature.expensemanager.exception.UserNotFoundException;
 import com.revature.expensemanager.model.User;
 
 public class UserService {
-    private static final UserJDBC userJDBC = new UserJDBC();
+    private UserJDBC userJDBC;
+
+    public UserService(Connection connection) {
+        userJDBC = new UserJDBC(connection);
+    }
 
     public Optional<User> getUser(int id) throws UserNotFoundException {
         Optional<User> optionalUser = userJDBC.get(id);

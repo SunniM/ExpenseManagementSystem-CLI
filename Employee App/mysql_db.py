@@ -3,21 +3,17 @@ import pandas as pd
 import sqlite3
 
 
-import init_db
+# import init_db
 class Database:
     def __init__(self):
-        try:
-            self.connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="password",
-            database="expensedb",
-            autocommit=True
-        )
-            print("Connection successful!")
-
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+        self.connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="password",
+        database="expensedb",
+        autocommit=True
+    )
+        print("Connection successful!")
         self.cursor = self.connection.cursor()
 
     def validate_user(self, username, password):
@@ -32,7 +28,6 @@ class Database:
         self.cursor.execute("INSERT INTO expenses (user_id, amount, description, date) VALUES(%s, %s, %s, %s)", (user_id, amount, description, date))
         expense_id = self.cursor.lastrowid
         self.cursor.execute("INSERT INTO expense_categories (expense_id, category_id) VALUES(%s, %s)", (expense_id, category_id))     
-        # self.cursor.execute("INSERT INTO approvals(expense_id, status) VALUES(%s, %s)", (expense_id, "PENDING"))
         self.connection.commit()
         return self.cursor.rowcount
 
@@ -63,22 +58,13 @@ class Database:
                                     e.id = %s;
                             ''', (user_id, expense_id))
         return self.cursor.fetchone()
-       
-                                
     
     def get_all_expenses(self, user_id):
-        self.cursor.execute('''SELECT e.id, e.amount, e.description, e.date, a.status 
-                               FROM expenses AS e INNER JOIN approvals AS a on a.expense_id = e.id 
+        self.cursor.execute('''SELECT e.id, e.amount, e.description, e.date, a.status, a.comment
+                               FROM expenses AS e
+                               JOIN approvals AS a on a.expense_id = e.id 
                                WHERE e.user_id = %s''', (user_id,))
         return self.cursor.fetchall()
-    
-    # TODO: Pass expense statuses as parameter to db
-    # def get_expenses(self, user_id, statuses):
-    #     self.cursor.execute('''SELECT e.id, e.amount, e.description, e.date, a.status 
-    #                            FROM expenses AS e INNER JOIN approvals AS a on a.expense_id = e.id 
-    #                            WHERE e.user_id = %s AND
-    #                             a.status IN (%s)''', (user_id,))
-    #     return self.cursor.fetchall()
     
     def close(self):
         self.connection.commit()

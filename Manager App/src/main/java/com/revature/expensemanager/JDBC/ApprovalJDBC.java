@@ -2,7 +2,6 @@ package com.revature.expensemanager.JDBC;
 
 import com.revature.expensemanager.dao.Dao;
 import com.revature.expensemanager.model.Approval;
-import com.revature.expensemanager.util.DbConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class ApprovalJDBC implements Dao<Approval> {
-    private static final Connection connection = DbConnection.dbConnection();
+    private Connection connection;
+
+    public ApprovalJDBC(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public Optional<Approval> get(int id) {

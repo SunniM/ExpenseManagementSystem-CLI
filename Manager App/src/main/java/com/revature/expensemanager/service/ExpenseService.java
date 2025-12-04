@@ -1,12 +1,17 @@
 package com.revature.expensemanager.service;
 
+import java.sql.Connection;
 import java.util.List;
 
 import com.revature.expensemanager.JDBC.ExpenseJDBC;
 import com.revature.expensemanager.model.Expense;
 
 public class ExpenseService {
-    private static final ExpenseJDBC expenseJDBC = new ExpenseJDBC();
+    private ExpenseJDBC expenseJDBC;
+
+    public ExpenseService(Connection connection) {
+        expenseJDBC = new ExpenseJDBC(connection);
+    }
 
     private static int computeMaxDescLength(List<Expense> expenses) {
         return expenses.stream()
