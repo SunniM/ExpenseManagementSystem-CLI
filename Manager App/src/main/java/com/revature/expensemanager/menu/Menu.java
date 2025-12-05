@@ -115,7 +115,7 @@ public class Menu {
             } else if (confirmation.equalsIgnoreCase("N")) {
                 return false;
             } else {
-                System.out.println("Invalid scanner. Please enter Y or N:");
+                System.out.println("Invalid input. Please enter Y or N:");
             }
         }
     }
