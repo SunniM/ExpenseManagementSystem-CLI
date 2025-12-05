@@ -41,7 +41,9 @@ class Database:
         return self.cursor.rowcount
 
     def delete_expense(self, user_id, expense_id):
-        self.cursor.execute('DELETE FROM expenses WHERE id=%s AND user_id=%s', (expense_id, user_id))
+        self.cursor.execute('''DELETE e FROM expenses e 
+                                JOIN approvals a ON (e.id=a.expense_id) 
+                                WHERE a.status="PENDING" AND e.id=%s AND e.user_id=%s''', (expense_id, user_id))
         return self.cursor.rowcount
     
     def get_pending_expenses(self, user_id):
@@ -52,8 +54,10 @@ class Database:
     
     def get_pending_expense_by_id(self, user_id, expense_id):
         self.cursor.execute('''SELECT e.id, e.amount, e.description, e.date
-                                FROM expenses AS e
-                                WHERE 
+                                FROM expenses e
+                                JOIN approvals a ON e.id=a.expense_id
+                                WHERE
+                                    a.status="PENDING" AND
                                     e.user_id = %s AND
                                     e.id = %s;
                             ''', (user_id, expense_id))
