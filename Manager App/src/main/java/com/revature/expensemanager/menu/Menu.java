@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.revature.expensemanager.service.ExpenseService;
+import com.revature.expensemanager.exception.ApprovalNotFoundException;
+import com.revature.expensemanager.exception.IllegalUpdateException;
 import com.revature.expensemanager.exception.UserNotFoundException;
 import com.revature.expensemanager.model.User;
 import com.revature.expensemanager.service.ApprovalService;
@@ -35,18 +37,9 @@ public class Menu {
         loginService = new LoginService(conn);
     }
 
-    private final static void clearConsole() {
-        try {
-            final String os = System.getProperty("os.name");
-            if (os.contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } else { // Assume Unix-like systems (Linux, macOS)
-                new ProcessBuilder("clear").inheritIO().start().waitFor();
-            }
-        } catch (final Exception e) {
-            // Handle any exceptions, e.g., print an error message
-            System.err.println("Error clearing console: " + e.getMessage());
-        }
+    public static void clearConsole() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     private void login() {
@@ -151,6 +144,7 @@ public class Menu {
         int choice;
 
         while (!done) {
+            System.out.println("Manager Expense Portal");
             displayOptions();
             choice = chooseOption();
             switch (choice) {
@@ -212,11 +206,15 @@ public class Menu {
         int expenseID = getIntegerInput();
         System.out.println("Enter Comment");
         String comment = getComment();
-        boolean confirmed = getConfirmation();
         clearConsole();
 
-        if (confirmed) {
-            approvalService.denyExpense(expenseID, user.getId(), comment);
+        if (getConfirmation()) {
+            try {
+                approvalService.denyExpense(expenseID, user.getId(), comment);
+            } catch (ApprovalNotFoundException | IllegalUpdateException e) {
+                System.err.println("Invalid Expense ID: " + expenseID);
+                logger.error("Invalid Expense ID: ", e);
+            }
             return;
         }
         System.out.println("Canceled.");
@@ -229,11 +227,14 @@ public class Menu {
         int expenseID = getIntegerInput();
         System.out.println("Enter Comment");
         String comment = getComment();
-        boolean confirmed = getConfirmation();
-        clearConsole();
 
-        if (confirmed) {
-            approvalService.approveExpense(expenseID, user.getId(), comment);
+        if (getConfirmation()) {
+            try {
+                approvalService.approveExpense(expenseID, user.getId(), comment);
+            } catch (ApprovalNotFoundException | IllegalUpdateException e) {
+                System.err.println("Invalid Expense ID: " + expenseID);
+                logger.error("Invalid Expense ID: ", e);
+            }
             return;
         }
         System.out.println("Canceled.");

@@ -8,9 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApprovalJDBC implements Dao<Approval> {
+    private static final Logger logger = LoggerFactory.getLogger(ApprovalJDBC.class);
     private Connection connection;
 
     public ApprovalJDBC(Connection connection) {
@@ -18,7 +21,7 @@ public class ApprovalJDBC implements Dao<Approval> {
     }
 
     @Override
-    public Optional<Approval> get(int id) {
+    public Approval get(int id) {
         Approval approval = null;
         String query = "SELECT * FROM approvals WHERE id = ?";
         PreparedStatement preparedStatement;
@@ -36,10 +39,9 @@ public class ApprovalJDBC implements Dao<Approval> {
                         resultSet.getString("review_date"));
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Could not get approval: ", e);
         }
-        return Optional.ofNullable(approval);
+        return approval;
     }
 
     public Approval getByExpenseID(int expenseID) {
@@ -60,8 +62,7 @@ public class ApprovalJDBC implements Dao<Approval> {
                         resultSet.getString("review_date"));
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Could not get approval: ", e);
         }
         return approval;
     }

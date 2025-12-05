@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.revature.expensemanager.JDBC.ExpenseJDBC;
+import com.revature.expensemanager.exception.ExpenseNotFoundException;
 import com.revature.expensemanager.model.Expense;
 
 public class ExpenseService {
@@ -18,6 +19,13 @@ public class ExpenseService {
                 .map(e -> e.getDescription().length())
                 .max(Integer::compareTo)
                 .orElse(10);
+    }
+
+    public Expense getExpense(int id) throws ExpenseNotFoundException {
+        Expense expense = expenseJDBC.get(id);
+        if (expense == null)
+            throw new ExpenseNotFoundException("Could Not Find Expense");
+        return expense;
     }
 
     public String getExpenseTable() {

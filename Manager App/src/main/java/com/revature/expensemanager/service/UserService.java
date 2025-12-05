@@ -1,7 +1,6 @@
 package com.revature.expensemanager.service;
 
 import java.sql.Connection;
-import java.util.Optional;
 
 import com.revature.expensemanager.JDBC.UserJDBC;
 import com.revature.expensemanager.exception.UserNotFoundException;
@@ -14,12 +13,12 @@ public class UserService {
         userJDBC = new UserJDBC(connection);
     }
 
-    public Optional<User> getUser(int id) throws UserNotFoundException {
-        Optional<User> optionalUser = userJDBC.get(id);
-        if (optionalUser.isEmpty()) {
+    public User getUser(int id) throws UserNotFoundException {
+        User user = userJDBC.get(id);
+        if (user == null) {
             throw new UserNotFoundException("User ID could not be verified.");
         }
-        return optionalUser;
+        return user;
     }
 
     public void addUser(User user) {

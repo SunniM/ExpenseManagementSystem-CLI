@@ -6,13 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
 import com.revature.expensemanager.dao.Dao;
 import com.revature.expensemanager.model.User;
 
 public class UserJDBC implements Dao<User> {
+    private static final Logger logger = LoggerFactory.getLogger(UserJDBC.class);
+
     private Connection connection;
 
     public UserJDBC(Connection connection) {
@@ -26,7 +31,7 @@ public class UserJDBC implements Dao<User> {
     }
 
     @Override
-    public Optional<User> get(int id) {
+    public User get(int id) {
         User user = null;
         String query = "SELECT * FROM users WHERE id = ?";
         PreparedStatement preparedStatement;
@@ -42,15 +47,13 @@ public class UserJDBC implements Dao<User> {
                         resultSet.getString("role"));
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Could not get user: ", e);
         }
-        return Optional.ofNullable(user);
+        return user;
     }
 
     @Override
     public List<User> getAll() {
-        // TODO Auto-generated method stub
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM users;";
         Statement statement;
@@ -65,8 +68,7 @@ public class UserJDBC implements Dao<User> {
                         resultSet.getString("role")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // TODO: handle exception
+            logger.error("Could not get all users: ", e);
         }
         return users;
     }

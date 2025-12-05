@@ -1,12 +1,15 @@
 package com.revature.expensemanager.JDBC;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.revature.expensemanager.dao.Dao;
 import com.revature.expensemanager.model.Expense;
@@ -14,15 +17,33 @@ import com.revature.expensemanager.model.Expense;
 public class ExpenseJDBC implements Dao<Expense> {
 
     Connection connection;
+    private static final Logger logger = LoggerFactory.getLogger(ExpenseJDBC.class);
 
     public ExpenseJDBC(Connection connection) {
         this.connection = connection;
     }
 
     @Override
-    public Optional<Expense> get(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    public Expense get(int id) {
+        Expense expense = null;
+        String query = "SELECT * FROM expenses WHERE id = ?";
+        PreparedStatement preparedStatement;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+                expense = new Expense(
+                        id,
+                        resultSet.getInt("user_id"),
+                        resultSet.getDouble("amount"),
+                        resultSet.getString("description"),
+                        resultSet.getString("date"));
+
+        } catch (SQLException e) {
+            logger.error("Could not retrieve expense", e);
+        }
+        return expense;
     }
 
     @Override

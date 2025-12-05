@@ -38,6 +38,6 @@ public class User {
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + "{id=%d username='%s' password='%s' role='%s'}".formatted(id, username, password, role);
+                + String.format("{id=%d username='%s' password='%s' role='%s'}", id, username, password, role);
     }
 }
